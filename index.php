@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <div class="container text-center" style="background-color: burlywood;">
         <h1 style="font-weight: bold;">ទម្រង់ព័ត៍មានរបស់សិស្សនិស្សិត</h1>
@@ -43,7 +44,7 @@
                     <tbody>
                         <?php if (isset($_GET['search'])) {
                             $filtervalues = $_GET['search'];
-                            $sql="SELECT student.*,school.title_school,subject.title_subject from student JOIN school on student.school=school.id JOIN subject on student.subject=subject.id WHERE CONCAT(name) LIKE '%$filtervalues%'";
+                            $sql = "SELECT student.*,school.title_school,subject.title_subject from student JOIN school on student.school=school.id JOIN subject on student.subject=subject.id WHERE CONCAT(name) LIKE CONCAT('%$filtervalues%')";
                             $query_run = $function_data->conn->query($sql);
                         ?>
                             <?php if (mysqli_num_rows($query_run) > 0) { ?>
@@ -77,29 +78,38 @@
                                 </tr>
                             <?php } ?>
                         <?php } else { ?>
-                            <?php $function_data->student();
-                            $i = 1;
-                            while ($row = mysqli_fetch_assoc($function_data->data_student)) { ?>
+                            <?php $function_data->student(); if (mysqli_num_rows($function_data->data_student) > 0) { ?>
+                                <?php $function_data->student();
+                                $i = 1;
+                                while ($row = mysqli_fetch_assoc($function_data->data_student)) { ?>
+                                    <?php if ($row > 0) ?>
+                                    <tr>
+                                        <td class="col-1"><?php echo $i ?></td>
+                                        <td class="col-1"><?php echo $row['id'] ?></td>
+                                        <td class="col-1"><?php echo $row['name'] ?></td>
+                                        <td class="col-1"><?php echo $row['sex'] ?></td>
+                                        <td class="col-1"><?php echo $row['email'] ?></td>
+                                        <td class="col-2"><?php echo $row['title_school'] ?></td>
+                                        <td class="col-1"><?php echo $row['title_subject'] ?></td>
+                                        <td class="col-1"><?php echo $row['date'] ?></td>
+                                        <td style="margin: 30px;padding: 10px;" class="col-2">
+                                            <button type="button" value="<?php echo $row['id'] ?>" class="btn btn-outline-danger delete" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Delete
+                                            </button>
+                                            <button type="button" value="<?php echo $row['id'] ?>" class="btn btn-outline-secondary update" data-bs-toggle="modal" data-bs-target="#fullscreeexampleModal">
+                                                Update
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php $i++;
+                                } ?>
+                            <?php } else { ?>
                                 <tr>
-                                    <td class="col-1"><?php echo $i ?></td>
-                                    <td class="col-1"><?php echo $row['id'] ?></td>
-                                    <td class="col-1"><?php echo $row['name'] ?></td>
-                                    <td class="col-1"><?php echo $row['sex'] ?></td>
-                                    <td class="col-1"><?php echo $row['email'] ?></td>
-                                    <td class="col-2"><?php echo $row['title_school'] ?></td>
-                                    <td class="col-1"><?php echo $row['title_subject'] ?></td>
-                                    <td class="col-1"><?php echo $row['date'] ?></td>
-                                    <td style="margin: 30px;padding: 10px;" class="col-2">
-                                        <button type="button" value="<?php echo $row['id'] ?>" class="btn btn-outline-danger delete" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                            Delete
-                                        </button>
-                                        <button type="button" value="<?php echo $row['id'] ?>" class="btn btn-outline-secondary update" data-bs-toggle="modal" data-bs-target="#fullscreeexampleModal">
-                                            Update
-                                        </button>
+                                    <td colspan="10">
+                                        <p style="display: flex;justify-content: center;align-items: center; margin-top:15px">No Record Found</p>
                                     </td>
                                 </tr>
-                            <?php $i++;
-                            } ?>
+                            <?php } ?>
                         <?php } ?>
                     </tbody>
                 </table>
